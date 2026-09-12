@@ -1,0 +1,65 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build ${{ matrix.variant }}
+    runs-on: macos-14
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: [rootless, roothide]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show toolchain info
+        run: |
+          sw_vers
+          xcodebuild -version
+          xcrun --sdk iphoneos --show-sdk-version
+          xcrun --sdk iphoneos --show-sdk-path
+
+      - name: Install Theos
+        run: |
+          set -euo pipefail
+          THEOS_ROOT="${THEOS:-$GITHUB_WORKSPACE/theos}"
+          if [ ! -d "$THEOS_ROOT" ]; then
+            git clone --depth=1 https://github.com/theos/theos.git "$THEOS_ROOT"
+          fi
+          # 软链系统 iOS SDK（macos-14 自带 Xcode 15）
+          SDK_PATH="$(xcrun --sdk iphoneos --show-sdk-path)"
+          if [ ! -e "$THEOS_ROOT/sdks/iPhoneOS.sdk" ]; then
+            sudo mkdir -p "$THEOS_ROOT/sdks"
+            sudo ln -s "$SDK_PATH" "$THEOS_ROOT/sdks/iPhoneOS.sdk"
+          fi
+          # 写死 rbtree.h 缺失补丁（最新 Xcode SDK 经常漏）
+          if [ ! -f "$THEOS_ROOT/sdks/iPhoneOS.sdk/usr/include/rbtree.h" ] && \
+             [ -f "$THEOS_ROOT/sdks/iPhoneOS.sdk/usr/include/sys/rbtree.h" ]; then
+            sudo ln -sf "sys/rbtree.h" "$THEOS_ROOT/sdks/iPhoneOS.sdk/usr/include/rbtree.h"
+          fi
+          echo "THEOS=$THEOS_ROOT" >> "$GITHUB_ENV"
+          echo "==> Theos installed at $THEOS_ROOT"
+          ls "$THEOS_ROOT/sdks/"
+
+      - name: Make scripts executable
+        run: chmod +x scripts/build.sh
+
+      - name: Build ${{ matrix.variant }} deb
+        env:
+          THEOS: ${{ env.THEOS }}
+          THEOS_PACKAGE_SCHEME: ${{ matrix.variant }}
+        run: ./scripts/build.sh ${{ matrix.variant }}
+
+      - name: Upload deb artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AihuishouBatchFind-${{ matrix.variant }}-deb
+          path: packages/*.deb
+          if-no-files-found: error
+          retention-days: 14

@@ -1,0 +1,10 @@
+Package: com.example.aihuishou.batchfind
+Name: AihuishouBatchFind
+Version: 1.0.0
+Architecture: iphoneos-arm64
+Description: 爱回收严选二手批量查找插件 (roothide)
+Maintainer: Your Name <you@example.com>
+Author: Your Name
+Section: Tweaks
+Depends: mobilesubstrate
+Package-Type: roothide

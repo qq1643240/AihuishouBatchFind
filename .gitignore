@@ -1,0 +1,30 @@
+# Theos build artifacts
+theos/
+.theos/
+build/
+*.o
+*.d
+*.dep
+
+# Generated control file (built from control.rootless / control.roothide)
+control
+
+# Output packages
+packages/
+*.deb
+*.dylib
+
+# macOS / Xcode
+.DS_Store
+xcuserdata/
+*.xcworkspace/
+*.xcodeproj/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.bak
+
+# Logs
+*.log
