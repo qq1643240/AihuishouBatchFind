@@ -30,9 +30,16 @@ jobs:
       - name: Install Theos
         run: |
           set -euo pipefail
+          if [ "${{ matrix.variant }}" = "roothide" ]; then
+            THEOS_REPO="https://github.com/roothide/theos.git"
+            THEOS_BRANCH="master"
+          else
+            THEOS_REPO="https://github.com/theos/theos.git"
+            THEOS_BRANCH="master"
+          fi
           THEOS_ROOT="${THEOS:-$GITHUB_WORKSPACE/theos}"
           if [ ! -d "$THEOS_ROOT" ]; then
-            git clone --depth=1 https://github.com/theos/theos.git "$THEOS_ROOT"
+            git clone --depth=1 --branch="$THEOS_BRANCH" "$THEOS_REPO" "$THEOS_ROOT"
           fi
           SDK_PATH="$(xcrun --sdk iphoneos --show-sdk-path)"
           if [ ! -e "$THEOS_ROOT/sdks/iPhoneOS.sdk" ]; then

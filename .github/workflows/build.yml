@@ -26,11 +26,20 @@ jobs:
           xcrun --sdk iphoneos --show-sdk-path
 
       - name: Install Theos
+        # roothide 用 roothide/theos fork（带 roothide scheme 支持）；
+        # rootless 用官方 theos/theos。
         run: |
           set -euo pipefail
+          if [ "${{ matrix.variant }}" = "roothide" ]; then
+            THEOS_REPO="https://github.com/roothide/theos.git"
+            THEOS_BRANCH="master"
+          else
+            THEOS_REPO="https://github.com/theos/theos.git"
+            THEOS_BRANCH="master"
+          fi
           THEOS_ROOT="${THEOS:-$GITHUB_WORKSPACE/theos}"
           if [ ! -d "$THEOS_ROOT" ]; then
-            git clone --depth=1 https://github.com/theos/theos.git "$THEOS_ROOT"
+            git clone --depth=1 --branch="$THEOS_BRANCH" "$THEOS_REPO" "$THEOS_ROOT"
           fi
           # 软链系统 iOS SDK（macos-14 自带 Xcode 15）
           SDK_PATH="$(xcrun --sdk iphoneos --show-sdk-path)"
@@ -38,13 +47,13 @@ jobs:
             sudo mkdir -p "$THEOS_ROOT/sdks"
             sudo ln -s "$SDK_PATH" "$THEOS_ROOT/sdks/iPhoneOS.sdk"
           fi
-          # 写死 rbtree.h 缺失补丁（最新 Xcode SDK 经常漏）
+          # rbtree.h 缺失补丁
           if [ ! -f "$THEOS_ROOT/sdks/iPhoneOS.sdk/usr/include/rbtree.h" ] && \
              [ -f "$THEOS_ROOT/sdks/iPhoneOS.sdk/usr/include/sys/rbtree.h" ]; then
             sudo ln -sf "sys/rbtree.h" "$THEOS_ROOT/sdks/iPhoneOS.sdk/usr/include/rbtree.h"
           fi
           echo "THEOS=$THEOS_ROOT" >> "$GITHUB_ENV"
-          echo "==> Theos installed at $THEOS_ROOT"
+          echo "==> Theos installed at $THEOS_ROOT (repo: $THEOS_REPO)"
           ls "$THEOS_ROOT/sdks/"
 
       - name: Make scripts executable
