@@ -4,10 +4,14 @@
 
 #import <UIKit/UIKit.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface AHProgressHUD : NSObject
 
-+ (void)showWithTitle:(NSString *)title;
++ (void)showWithTitle:(nullable NSString *)title;
 + (void)updateTitle:(nullable NSString *)title progress:(double)p;  // 0..1
 + (void)dismiss;
 
 @end
+
+NS_ASSUME_NONNULL_END

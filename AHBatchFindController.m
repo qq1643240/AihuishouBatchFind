@@ -243,10 +243,9 @@ typedef NS_ENUM(NSInteger, AHBFState) {
 
     NSString *cur = @"不限";
     NSInteger tag = 0;
-    NSArray *opts = nil;
-    if (row == 1) { cur = self.filter[@"memory"] ?: @"不限"; opts = self.memoryOptions; tag = 200; }
-    if (row == 3) { cur = self.filter[@"ios"]    ?: @"不限"; opts = self.iosOptions;    tag = 201; }
-    if (row == 4) { cur = self.filter[@"color"]  ?: @"不限"; opts = self.colorOptions;  tag = 202; }
+    if (row == 1) { cur = self.filter[@"memory"] ?: @"不限"; tag = 200; }
+    if (row == 3) { cur = self.filter[@"ios"]    ?: @"不限"; tag = 201; }
+    if (row == 4) { cur = self.filter[@"color"]  ?: @"不限"; tag = 202; }
 
     [btn setTitle:cur forState:UIControlStateNormal];
     btn.tag = tag;
@@ -387,7 +386,7 @@ typedef NS_ENUM(NSInteger, AHBFState) {
     __weak typeof(self) wself = self;
     dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
         // ② 进行中：实时更新标题 & 进度
-        [wself _runBatchSearchWithModel:model memory:memory color:color battery:battery ios:ios];
+        [wself _runBatchSearchWithModel:model memory:memory color:color battery:battery iosVersion:ios];
     });
 }
 
