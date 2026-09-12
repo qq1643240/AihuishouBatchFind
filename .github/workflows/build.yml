@@ -41,6 +41,10 @@ jobs:
           if [ ! -d "$THEOS_ROOT" ]; then
             git clone --depth=1 --branch="$THEOS_BRANCH" "$THEOS_REPO" "$THEOS_ROOT"
           fi
+          # 必须拉子模块（dm.pl 在 submodule 里）
+          cd "$THEOS_ROOT"
+          git submodule update --init --recursive --depth=1
+          cd "$GITHUB_WORKSPACE"
           # 软链系统 iOS SDK（macos-14 自带 Xcode 15）
           SDK_PATH="$(xcrun --sdk iphoneos --show-sdk-path)"
           if [ ! -e "$THEOS_ROOT/sdks/iPhoneOS.sdk" ]; then
