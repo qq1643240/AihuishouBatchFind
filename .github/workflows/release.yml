@@ -54,6 +54,9 @@ jobs:
              [ -f "$THEOS_ROOT/sdks/iPhoneOS.sdk/usr/include/sys/rbtree.h" ]; then
             sudo ln -sf "sys/rbtree.h" "$THEOS_ROOT/sdks/iPhoneOS.sdk/usr/include/rbtree.h"
           fi
+          if ! command -v ldid >/dev/null 2>&1; then
+            brew install ldid
+          fi
           echo "THEOS=$THEOS_ROOT" >> "$GITHUB_ENV"
 
       - name: Build ${{ matrix.variant }} deb

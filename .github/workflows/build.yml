@@ -56,8 +56,13 @@ jobs:
              [ -f "$THEOS_ROOT/sdks/iPhoneOS.sdk/usr/include/sys/rbtree.h" ]; then
             sudo ln -sf "sys/rbtree.h" "$THEOS_ROOT/sdks/iPhoneOS.sdk/usr/include/rbtree.h"
           fi
+          # 安装 ldid（iOS tweak 签名工具）
+          if ! command -v ldid >/dev/null 2>&1; then
+            brew install ldid
+          fi
           echo "THEOS=$THEOS_ROOT" >> "$GITHUB_ENV"
           echo "==> Theos installed at $THEOS_ROOT (repo: $THEOS_REPO)"
+          which ldid
           ls "$THEOS_ROOT/sdks/"
 
       - name: Make scripts executable
