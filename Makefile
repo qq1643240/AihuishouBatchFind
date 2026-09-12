@@ -9,7 +9,9 @@ include $(THEOS)/makefiles/common.mk
 TWEAK_NAME = AihuishouBatchFind
 AihuishouBatchFind_FILES = Tweak.xm \
                            AHBatchFindController.m \
+                           AHRealScrapeController.m \
                            AHBatchFindProxy.m \
+                           AHCaptureEngine.m \
                            AHRecordStore.m \
                            AHExporter.m \
                            AHProgressHUD.m \

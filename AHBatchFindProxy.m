@@ -1,6 +1,7 @@
 // AHBatchFindProxy.m
 #import "AHBatchFindProxy.h"
 #import "AHBatchFindController.h"
+#import "AHRealScrapeController.h"
 
 @implementation AHBatchFindProxy
 
@@ -18,6 +19,18 @@
     if (!top) return;
 
     AHBatchFindController *ctl = [[AHBatchFindController alloc] init];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:ctl];
+    nav.modalPresentationStyle = UIModalPresentationFormSheet;
+
+    self.currentPresenter = top;
+    [top presentViewController:nav animated:YES completion:nil];
+}
+
+- (void)onTapRealScrape:(UIBarButtonItem *)sender {
+    UIViewController *top = [self _topViewController];
+    if (!top) return;
+
+    AHRealScrapeController *ctl = [[AHRealScrapeController alloc] init];
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:ctl];
     nav.modalPresentationStyle = UIModalPresentationFormSheet;
 
